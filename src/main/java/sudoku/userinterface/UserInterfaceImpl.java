@@ -4,6 +4,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -12,9 +14,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import sudoku.constants.GameState;
-import sudoku.problemdomain.Coordinates;
-import sudoku.problemdomain.SudokuGame;
+import sudoku.constants.*;
+import sudoku.problemdomain.*;
 
 import java.util.HashMap;
 
@@ -136,7 +137,7 @@ public class UserInterfaceImpl implements IUserInterfaceContract.View, EventHand
     @Override
     public void updateSquare(int x, int y, int input) {
         SudokuTextField tile = textFieldCoordinates.get(new Coordinates(x, y));
-        String value = Integer.toString(input)
+        String value = Integer.toString(input);
         if (value.equals("0")) value = "";
         tile.textProperty().setValue(value);
     }
@@ -168,13 +169,25 @@ public class UserInterfaceImpl implements IUserInterfaceContract.View, EventHand
 
     @Override
     public void showDialog(String message) {
+        Alert dialog = new Alert(Alert.AlertType.CONFIRMATION, message, ButtonType.OK);
+        dialog.showAndWait();
+        if (dialog.getResult() == ButtonType.OK) listener.onDialogClick();
     }
 
     @Override
     public void showError(String message) {
+        Alert dialog = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
+        dialog.showAndWait();
     }
 
     @Override
-    public void handle(KeyEvent keyEvent) {
+    public void handle(KeyEvent event) {
+        if (event.getEventType() == KeyEvent.KEY_PRESSED) {
+            if (event.getText().matches("[0-9]")) {
+
+                int value = Integer.parseInt(event.getText());
+            handleInput(value,event.getSource());
+            }
+        }
     }
 }
